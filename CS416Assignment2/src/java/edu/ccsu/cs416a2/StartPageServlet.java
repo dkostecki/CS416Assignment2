@@ -6,6 +6,9 @@ package edu.ccsu.cs416a2;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "StartPageServlet", urlPatterns = {"/StartPageServlet"})
 public class StartPageServlet extends HttpServlet {
 
-    @Resource(name = "jdbc/HW2DB")
-    private javax.sql.DataSource datasource;
+@Resource(name = "jdbc/HW2DB")
+private javax.sql.DataSource datasource;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,7 +38,8 @@ public class StartPageServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        PrintWriter out = response.getWriter();
+        try{
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -43,9 +47,30 @@ public class StartPageServlet extends HttpServlet {
             out.println("<title>Servlet StartPageServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet StartPageServlet at " + request.getContextPath() + "</h1>");
+            //out.println("<h1>Servlet StartPageServlet at " + request.getContextPath() + "</h1>");
+            
+            out.println("Vote what your favorite type of music is: " + "</br>");
+            
+            Connection connection = datasource.getConnection();
+            String sql = "select * from VOTES";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            
+            //Shows data from the musictype column in the DB
+            while(resultSet.next()){
+                out.println(resultSet.getString("musictype") + "<br/>");
+            }
+            
+            resultSet.close();
+            statement.close();
+            connection.close();
+            
             out.println("</body>");
             out.println("</html>");
+        }catch(Exception e){
+            out.println("Error occurred " + e.getMessage());
+        }finally{
+            out.close();
         }
     }
 
