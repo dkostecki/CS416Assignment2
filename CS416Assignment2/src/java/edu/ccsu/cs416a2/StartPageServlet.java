@@ -40,33 +40,61 @@ private javax.sql.DataSource datasource;
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try{
+            Connection connection = datasource.getConnection();
+            
+            String musictype = request.getParameter("musictype");
+            //Add new musictype to DB
+            if(musictype != null && musictype.length() > 0){  
+                //int numvotes = Integer.parseInt(request.getParameter("numvotes"));
+                String sql = "insert into votes(musictype, numvotes) values (?,?)";              
+                PreparedStatement insertStatement = connection.prepareStatement(sql);
+                insertStatement.setString(1,musictype);
+                //int numvotes = numvote + 1; 
+                insertStatement.setInt(2,0);
+                int recordsAffected = insertStatement.executeUpdate();
+                insertStatement.close();
+               
+            }
+            
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Servlet StartPageServlet</title>");            
             out.println("</head>");
-            out.println("<body>");
-            //out.println("<h1>Servlet StartPageServlet at " + request.getContextPath() + "</h1>");
+            out.println("<body>");           
             
             out.println("Vote what your favorite type of music is: " + "</br>");
+           
+           
             
-            Connection connection = datasource.getConnection();
-            String sql = "select * from VOTES";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
+            String readSQL = "select * from VOTES";
+            PreparedStatement readStatement = connection.prepareStatement(readSQL);
+            ResultSet resultSet = readStatement.executeQuery();
             
             //Shows data from the musictype column in the DB
             while(resultSet.next()){
-                out.println(resultSet.getString("musictype") + "<br/>");
+                musictype = resultSet.getString("musictype");
+                //out.println(musictype + "</br>");
+                /*Don't need resultSet.getString("numvotes") on this servlet, but
+                I was testing something out. Remove it later.
+                */
+                out.println(musictype + " " + resultSet.getString("numvotes") + "</br>");
             }
             
-            resultSet.close();
-            statement.close();
-            connection.close();
+            out.println("</br>" + "Or add a new one" + "</br>");   
             
+            out.println("<form action=\"StartPageServlet\" method=\"GET\">");
+            out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
+            out.println("<input type=\"submit\" value=\"Add type and vote\"/>");
+            out.println("</form>");
+ 
             out.println("</body>");
             out.println("</html>");
+            
+            resultSet.close();
+            readStatement.close();
+            connection.close();
         }catch(Exception e){
             out.println("Error occurred " + e.getMessage());
         }finally{
