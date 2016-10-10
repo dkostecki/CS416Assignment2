@@ -1,7 +1,24 @@
-Sun Oct 09 19:46:00 EDT 2016 : Apache Derby Network Server - 10.11.1.2 - (1629631) started and ready to accept connections on port 1527
+Sun Oct 09 22:02:15 EDT 2016 : Apache Derby Network Server - 10.11.1.2 - (1629631) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Sun Oct 09 19:46:03 EDT 2016:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-0157-abd6-c020-fffff1ae9c3c 
+Sun Oct 09 22:02:28 EDT 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-0157-ac53-7efd-fffff1ae9c3c 
+on database directory C:\Users\daniel\Desktop\Computer Science\CS 416\cs416f16assignment2-group12\CS416Assignment2\HW2DB with class loader sun.misc.Launcher$AppClassLoader@1d44bcfa 
+Loaded from file:/C:/Program%20Files/Java/jdk1.8.0_101/db/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_101-b13
+user.dir=C:\Program Files\Java\jdk1.8.0_101\db
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=C:\Users\daniel\Desktop\Computer Science\CS 416\cs416f16assignment2-group12\CS416Assignment2
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Oct 09 22:02:32 EDT 2016:
+Shutting down instance a816c00e-0157-ac53-7efd-fffff1ae9c3c on database directory C:\Users\daniel\Desktop\Computer Science\CS 416\cs416f16assignment2-group12\CS416Assignment2\HW2DB with class loader sun.misc.Launcher$AppClassLoader@1d44bcfa 
+Sun Oct 09 22:02:33 EDT 2016 Thread[DRDAConnThread_2,5,main] (DATABASE = HW2DB), (DRDAID = {2}), Database 'HW2DB' shutdown.
+----------------------------------------------------------------
+Sun Oct 09 22:02:35 EDT 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance 0ddd00a9-0157-ac53-7efd-fffff1ae9c3c 
 on database directory C:\Users\daniel\Desktop\Computer Science\CS 416\cs416f16assignment2-group12\CS416Assignment2\HW2DB with class loader sun.misc.Launcher$AppClassLoader@1d44bcfa 
 Loaded from file:/C:/Program%20Files/Java/jdk1.8.0_101/db/lib/derby.jar
 java.vendor=Oracle Corporation
