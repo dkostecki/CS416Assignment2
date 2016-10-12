@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * authors Thi & Daniel
+ * author Thi
  */
 @WebServlet(name = "StartPageServlet", urlPatterns = {"/StartPageServlet"})
 public class StartPageServlet extends HttpServlet {
@@ -43,6 +43,9 @@ private javax.sql.DataSource datasource;
             Connection connection = datasource.getConnection();
             
             String musictype = request.getParameter("musictype");
+            
+            //Integer numvotes = Integer.parseInt(request.getParameter("numvotes"));
+            
             //Add new musictype to DB
             if(musictype != null && musictype.length() > 0){  
                 //int numvotes = Integer.parseInt(request.getParameter("numvotes"));
@@ -81,14 +84,16 @@ private javax.sql.DataSource datasource;
                 /*Don't need resultSet.getString("numvotes") on this servlet, but
                 I was testing something out. Remove it later.
                 */
-                out.println("<input type=\"radio\" value=\"Submit vote\"/>");
+                out.println("<input type=\"checkbox\" name=\"numvotes\"/>");
                 out.println(musictype + " " + "</br>");
+                
             }
           
+            
             //out.println("</br>" + "Or add a new one" + "</br>");   
             
             
-            out.println("<input type=\"submit\" value=\"Submit vote\"/><br/>");
+            out.println("<input type=\"submit\" id=\"numvotes\" value=\"Submit Vote\"/><br/>");
             out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
             out.println("<input type=\"submit\" value=\"Add type and vote\"/>");
