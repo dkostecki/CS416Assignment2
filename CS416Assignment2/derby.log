@@ -12,3 +12,9 @@ os.arch=amd64
 os.version=10.0
 derby.system.home=C:\Users\daniel\Desktop\Computer Science\CS 416\cs416f16assignment2-group12\CS416Assignment2
 Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Wed Oct 12 13:15:19 EDT 2016: Shutting down Derby engine
+----------------------------------------------------------------
+Wed Oct 12 13:15:20 EDT 2016:
+Shutting down instance a816c00e-0157-b97c-a1e1-fffff1ae9c3c on database directory C:\Users\daniel\Desktop\Computer Science\CS 416\cs416f16assignment2-group12\CS416Assignment2\HW2DB with class loader sun.misc.Launcher$AppClassLoader@1d44bcfa 
+----------------------------------------------------------------

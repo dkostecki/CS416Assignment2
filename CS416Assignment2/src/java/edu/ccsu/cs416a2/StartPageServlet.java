@@ -44,7 +44,16 @@ private javax.sql.DataSource datasource;
             
             String musictype = request.getParameter("musictype");
             
-            //Integer numvotes = Integer.parseInt(request.getParameter("numvotes"));
+            //testing updates for numvotes
+            /*int numvotes = 0;
+            if(request.getParameter("numvotes") != null)
+            {
+                numvotes = Integer.parseInt(request.getParameter("numvotes"));
+            }
+            */
+            //String temp = request.getParameter("numvotes");
+            
+            //Integer numvotes = Integer.parseInt(temp);
             
             //Add new musictype to DB
             if(musictype != null && musictype.length() > 0){  
@@ -80,6 +89,8 @@ private javax.sql.DataSource datasource;
             //Shows data from the musictype column in the DB
             while(resultSet.next()){
                 musictype = resultSet.getString("musictype");
+                //numvotes = Integer.parseInt(resultSet.getString("numvotes"));
+                //numvotes = resultSet.getInt("numvotes");
                 //out.println(musictype + "</br>");
                 /*Don't need resultSet.getString("numvotes") on this servlet, but
                 I was testing something out. Remove it later.
@@ -88,12 +99,11 @@ private javax.sql.DataSource datasource;
                 out.println(musictype + " " + "</br>");
                 
             }
-          
             
-            //out.println("</br>" + "Or add a new one" + "</br>");   
+            String sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = '?'";
             
+            out.println("<input type=\"submit\" value=\"Submit Vote\"/><br/>");
             
-            out.println("<input type=\"submit\" id=\"numvotes\" value=\"Submit Vote\"/><br/>");
             out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
             out.println("<input type=\"submit\" value=\"Add type and vote\"/>");
