@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Thi
+ * authors Thi & Daniel
  */
 @WebServlet(name = "StartPageServlet", urlPatterns = {"/StartPageServlet"})
 public class StartPageServlet extends HttpServlet {
@@ -72,6 +72,8 @@ private javax.sql.DataSource datasource;
             PreparedStatement readStatement = connection.prepareStatement(readSQL);
             ResultSet resultSet = readStatement.executeQuery();
             
+            out.println("<form action=\"StartPageServlet\" method=\"GET\">");
+            
             //Shows data from the musictype column in the DB
             while(resultSet.next()){
                 musictype = resultSet.getString("musictype");
@@ -79,12 +81,15 @@ private javax.sql.DataSource datasource;
                 /*Don't need resultSet.getString("numvotes") on this servlet, but
                 I was testing something out. Remove it later.
                 */
-                out.println(musictype + " " + resultSet.getString("numvotes") + "</br>");
+                out.println("<input type=\"radio\" value=\"Submit vote\"/>");
+                out.println(musictype + " " + "</br>");
             }
+          
+            //out.println("</br>" + "Or add a new one" + "</br>");   
             
-            out.println("</br>" + "Or add a new one" + "</br>");   
             
-            out.println("<form action=\"StartPageServlet\" method=\"GET\">");
+            out.println("<input type=\"submit\" value=\"Submit vote\"/><br/>");
+            out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
             out.println("<input type=\"submit\" value=\"Add type and vote\"/>");
             out.println("</form>");
