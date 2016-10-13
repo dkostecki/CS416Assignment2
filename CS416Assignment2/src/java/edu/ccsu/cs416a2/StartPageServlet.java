@@ -43,6 +43,7 @@ private javax.sql.DataSource datasource;
             Connection connection = datasource.getConnection();
             
             String musictype = request.getParameter("musictype");
+            String numvotes = request.getParameter("numvotes"); 
             
             //testing updates for numvotes
             /*int numvotes = 0;
@@ -61,8 +62,7 @@ private javax.sql.DataSource datasource;
                 String sql = "insert into votes(musictype, numvotes) values (?,?)";              
                 PreparedStatement insertStatement = connection.prepareStatement(sql);
                 insertStatement.setString(1,musictype);
-                //int numvotes = numvote + 1; 
-                insertStatement.setInt(2,0);
+                insertStatement.setInt(2,1);
                 int recordsAffected = insertStatement.executeUpdate();
                 insertStatement.close();
                
@@ -84,11 +84,12 @@ private javax.sql.DataSource datasource;
             PreparedStatement readStatement = connection.prepareStatement(readSQL);
             ResultSet resultSet = readStatement.executeQuery();
             
-            out.println("<form action=\"StartPageServlet\" method=\"GET\">");
+            //form started here before the commit
             
             //Shows data from the musictype column in the DB
             while(resultSet.next()){
                 musictype = resultSet.getString("musictype");
+                numvotes = resultSet.getString("numvotes");
                 //numvotes = Integer.parseInt(resultSet.getString("numvotes"));
                 //numvotes = resultSet.getInt("numvotes");
                 //out.println(musictype + "</br>");
@@ -96,14 +97,17 @@ private javax.sql.DataSource datasource;
                 I was testing something out. Remove it later.
                 */
                 out.println("<input type=\"checkbox\" name=\"numvotes\"/>");
-                out.println(musictype + " " + "</br>");
+                out.println(musictype + " " + numvotes + "</br>");
                 
             }
             
             String sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = '?'";
             
-            out.println("<input type=\"submit\" value=\"Submit Vote\"/><br/>");
+            out.println("<input type=\"submit\" value=\"Submit Vote\" onclick=\"location.href='Display.jsp'\"/><br/>");          
+            //request.setAttribute("passedAttribute", musictype + " has " + numvotes);
+            //request.getRequestDispatcher("Display.jsp").forward(request,response);
             
+            out.println("<form action=\"StartPageServlet\" method=\"GET\">");
             out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
             out.println("<input type=\"submit\" value=\"Add type and vote\"/>");
