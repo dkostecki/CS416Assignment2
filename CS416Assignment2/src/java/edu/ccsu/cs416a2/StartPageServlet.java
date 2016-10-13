@@ -1,7 +1,7 @@
-/*
- * This servlet displays the page that you vote on
- * 
- */
+/* |--------------------------------------------------------|
+ * |    This servlet displays the page that you vote on     |
+ * |--------------------------------------------------------|
+*/
 package edu.ccsu.cs416a2;
 
 import java.lang.*;
