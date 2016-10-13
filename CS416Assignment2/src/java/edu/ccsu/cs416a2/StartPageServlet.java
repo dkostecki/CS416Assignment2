@@ -4,6 +4,7 @@
  */
 package edu.ccsu.cs416a2;
 
+import java.lang.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -23,9 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "StartPageServlet", urlPatterns = {"/StartPageServlet"})
 public class StartPageServlet extends HttpServlet {
 
-@Resource(name = "jdbc/HW2DB")
-private javax.sql.DataSource datasource;
-    
+    @Resource(name = "jdbc/HW2DB")
+    private javax.sql.DataSource datasource;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -39,55 +40,51 @@ private javax.sql.DataSource datasource;
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        try{
+        try {
             Connection connection = datasource.getConnection();
-            
+
             String musictype = request.getParameter("musictype");
-            String numvotes = request.getParameter("numvotes"); 
-            
+            String numvotes = request.getParameter("numvotes");
+
             //testing updates for numvotes
             /*int numvotes = 0;
             if(request.getParameter("numvotes") != null)
             {
                 numvotes = Integer.parseInt(request.getParameter("numvotes"));
             }
-            */
+             */
             //String temp = request.getParameter("numvotes");
-            
             //Integer numvotes = Integer.parseInt(temp);
-            
             //Add new musictype to DB
-            if(musictype != null && musictype.length() > 0){  
+            if (musictype != null && musictype.length() > 0) {
                 //int numvotes = Integer.parseInt(request.getParameter("numvotes"));
-                String sql = "insert into votes(musictype, numvotes) values (?,?)";              
+                String sql = "insert into votes(musictype, numvotes) values (?,?)";
                 PreparedStatement insertStatement = connection.prepareStatement(sql);
-                insertStatement.setString(1,musictype);
-                insertStatement.setInt(2,1);
+                insertStatement.setString(1, musictype);
+                insertStatement.setInt(2, 1);
                 int recordsAffected = insertStatement.executeUpdate();
                 insertStatement.close();
-               
+
             }
-            
+
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet StartPageServlet</title>");            
+            out.println("<title>Servlet StartPageServlet</title>");
             out.println("</head>");
-            out.println("<body>");           
-            
+            out.println("<body>");
+
             out.println("Vote what your favorite type of music is: " + "</br>");
-           
-           
-            
+
             String readSQL = "select * from VOTES";
             PreparedStatement readStatement = connection.prepareStatement(readSQL);
             ResultSet resultSet = readStatement.executeQuery();
-            
+
             //form started here before the commit
-            
             //Shows data from the musictype column in the DB
-            while(resultSet.next()){
+            out.println("<form name = \"checkboxes\">");
+            while (resultSet.next()) {
                 musictype = resultSet.getString("musictype");
                 numvotes = resultSet.getString("numvotes");
                 //numvotes = Integer.parseInt(resultSet.getString("numvotes"));
@@ -95,57 +92,65 @@ private javax.sql.DataSource datasource;
                 //out.println(musictype + "</br>");
                 /*Don't need resultSet.getString("numvotes") on this servlet, but
                 I was testing something out. Remove it later.
-                */
-                out.println("<input type=\"checkbox\" name=\"numvotes\" value=\"votes\"/>");
+                 */
+                out.println("<input type=\"checkbox\" name=\"numvotes\" value=numvotes/>");
                 out.println(musictype + " " + numvotes + "</br>");
-     
+
             }
-                
-            
-          
-            String sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = '?'";
-            
+            out.println("</form>");
+
+            //String sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = '?'";
+
             out.println("<form action=\"StartPageServlet\" method=\"GET\">");
             out.println("<input type=\"submit\" name=\"sub\" value=\"Submit Vote\" onclick=\"location.href='Display.jsp'\"/><br/>");
-            
-             
+
             //If submit button is clicked, data will be displayed in jsp, but right now, it only shows the first musictype + its vote
-            if(request.getParameter("sub") != null){
+            if (request.getParameter("sub") != null) {
                 //If I don't have another String, PreparedStatement, ResultSet, it will only display the last the last musictype
                 String readSubmitSQL = "select * from VOTES";
                 PreparedStatement readSubStatement = connection.prepareStatement(readSubmitSQL);
                 ResultSet resultSubmit = readSubStatement.executeQuery();
-
-                while(resultSubmit.next()){ 
-                musictype = resultSubmit.getString("musictype");
-                numvotes = resultSubmit.getString("numvotes");
                 
-                request.setAttribute("passedAttribute", musictype + " has " + numvotes); 
-                request.getRequestDispatcher("Display.jsp").forward(request,response);
+                //String[] and for loop to try to check checked checkboxes and pass the values to the database
+                String[] check = request.getParameterValues("numvotes");
+                for (int i = 0; i < check.length; i++) {
+                    
+                    if(check!= null)
+                    {
+                        String sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = '?'";
+                    }
                 }
-                
+
+                while (resultSubmit.next()) {
+                    musictype = resultSubmit.getString("musictype");
+                    numvotes = resultSubmit.getString("numvotes");
+
+                    request.setAttribute("passedAttribute", musictype + " has " + numvotes);
+                    request.getRequestDispatcher("Display.jsp").forward(request, response);
+                }
+
             }
-   
+
             out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
             out.println("<input type=\"submit\" name=\"newSub\" value=\"Add type and vote\"/>");
-            
+
             //This will only show the last musictype/votes from database
-            if(request.getParameter("newSub") != null){
-                request.setAttribute("passedAttribute", musictype + " has " + numvotes); 
-                request.getRequestDispatcher("Display.jsp").forward(request,response);
+            if (request.getParameter("newSub") != null) {
+                request.setAttribute("passedAttribute", musictype + " has " + numvotes);
+                request.getRequestDispatcher("Display.jsp").forward(request, response);
             }
             out.println("</form>");
- 
+
             out.println("</body>");
             out.println("</html>");
-            
+
             resultSet.close();
             readStatement.close();
             connection.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             out.println("Error occurred " + e.getMessage());
-        }finally{
+        } finally {
             out.close();
         }
     }
