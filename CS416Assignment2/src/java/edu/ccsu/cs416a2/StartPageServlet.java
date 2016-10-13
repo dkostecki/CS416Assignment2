@@ -93,9 +93,8 @@ public class StartPageServlet extends HttpServlet {
                 /*Don't need resultSet.getString("numvotes") on this servlet, but
                 I was testing something out. Remove it later.
                  */
-                out.println("<input type=\"checkbox\" name=\"numvotes\" value=numvotes/>");
+                out.println("<input type=\"checkbox\" name=\"musictype\" value=musictype/>");
                 out.println(musictype + " " + numvotes + "</br>");
-
             }
             out.println("</form>");
 
@@ -112,12 +111,19 @@ public class StartPageServlet extends HttpServlet {
                 ResultSet resultSubmit = readSubStatement.executeQuery();
                 
                 //String[] and for loop to try to check checked checkboxes and pass the values to the database
-                String[] check = request.getParameterValues("numvotes");
+                String[] check = request.getParameterValues("musictype");
                 for (int i = 0; i < check.length; i++) {
                     
-                    if(check!= null)
+                    String[] checkVal = request.getParameterValues(check[i]);
+                    
+                    if(checkVal != null)
                     {
-                        String sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = '?'";
+                        String sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = ?)";
+                        PreparedStatement insertStatement = connection.prepareStatement(sql);
+
+                        musictype = resultSubmit.getString("musictype");
+                        insertStatement.setString(1, musictype);
+
                     }
                 }
 
