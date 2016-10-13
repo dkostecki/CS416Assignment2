@@ -12,7 +12,7 @@
         <title>Results</title>
     </head>
     <body>
-        Display page
+        Display page     
         <h1><% out.println(request.getAttribute("passedAttribute")); %></h1>
     </body>
 </html>

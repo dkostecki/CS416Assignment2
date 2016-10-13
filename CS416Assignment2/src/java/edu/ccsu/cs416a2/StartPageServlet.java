@@ -96,21 +96,45 @@ private javax.sql.DataSource datasource;
                 /*Don't need resultSet.getString("numvotes") on this servlet, but
                 I was testing something out. Remove it later.
                 */
-                out.println("<input type=\"checkbox\" name=\"numvotes\"/>");
+                out.println("<input type=\"checkbox\" name=\"numvotes\" value=\"votes\"/>");
                 out.println(musictype + " " + numvotes + "</br>");
-                
+     
             }
+                
             
+          
             String sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = '?'";
             
-            out.println("<input type=\"submit\" value=\"Submit Vote\" onclick=\"location.href='Display.jsp'\"/><br/>");          
-            //request.setAttribute("passedAttribute", musictype + " has " + numvotes);
-            //request.getRequestDispatcher("Display.jsp").forward(request,response);
-            
             out.println("<form action=\"StartPageServlet\" method=\"GET\">");
+            out.println("<input type=\"submit\" name=\"sub\" value=\"Submit Vote\" onclick=\"location.href='Display.jsp'\"/><br/>");
+            
+             
+            //If submit button is clicked, data will be displayed in jsp, but right now, it only shows the first musictype + its vote
+            if(request.getParameter("sub") != null){
+                //If I don't have another String, PreparedStatement, ResultSet, it will only display the last the last musictype
+                String readSubmitSQL = "select * from VOTES";
+                PreparedStatement readSubStatement = connection.prepareStatement(readSubmitSQL);
+                ResultSet resultSubmit = readSubStatement.executeQuery();
+
+                while(resultSubmit.next()){ 
+                musictype = resultSubmit.getString("musictype");
+                numvotes = resultSubmit.getString("numvotes");
+                
+                request.setAttribute("passedAttribute", musictype + " has " + numvotes); 
+                request.getRequestDispatcher("Display.jsp").forward(request,response);
+                }
+                
+            }
+   
             out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
-            out.println("<input type=\"submit\" value=\"Add type and vote\"/>");
+            out.println("<input type=\"submit\" name=\"newSub\" value=\"Add type and vote\"/>");
+            
+            //This will only show the last musictype/votes from database
+            if(request.getParameter("newSub") != null){
+                request.setAttribute("passedAttribute", musictype + " has " + numvotes); 
+                request.getRequestDispatcher("Display.jsp").forward(request,response);
+            }
             out.println("</form>");
  
             out.println("</body>");
