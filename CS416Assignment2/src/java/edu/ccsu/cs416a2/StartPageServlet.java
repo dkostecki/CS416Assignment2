@@ -15,11 +15,13 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet(name = "StartPageServlet", urlPatterns = {"/StartPageServlet"})
 public class StartPageServlet extends HttpServlet {
@@ -114,7 +116,7 @@ public class StartPageServlet extends HttpServlet {
             }
             
             out.println("<input type=\"submit\" name=\"sub\" value=\"Submit Vote\"/><br/>");
-
+            
             //If submit button is clicked, data will be displayed in jsp, but right now, it only shows the first musictype + its vote
             if (request.getParameter("sub") != null) {
                 //If I don't have another String, PreparedStatement, ResultSet, it will only display the last the last musictype
@@ -138,18 +140,25 @@ public class StartPageServlet extends HttpServlet {
                     }
                     
                     //Go to DisplayServlet
-                    response.sendRedirect("DisplayServlet");
+                    response.sendRedirect("DisplayServlet");   
                 }
             }
-
+     
             out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
             out.println("<input type=\"submit\" name=\"newSub\" value=\"Add type and vote\"/>");
 
             //Go to DisplayServlet
-            if (request.getParameter("newSub") != null) {
+            if (request.getParameter("newSub") != null) {               
                 response.sendRedirect("DisplayServlet");
             }
+            String sessionCount = "0"; 
+            if(request.getParameter("sub") != null || request.getParameter("newSub") != null){
+            sessionCount = "1";    
+            request.setAttribute("passSession", sessionCount);
+            request.getRequestDispatcher("SessionContext.java").forward(request, response);
+            } 
+           
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
@@ -191,14 +200,30 @@ public class StartPageServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+         HttpSession session = request.getSession();
+        Integer sessionVotes = (Integer)session.getAttribute("sub");
+        if (sessionVotes == null){
+            sessionVotes = 0;
+            session.setAttribute("sub", sessionVotes);
+        }else{
+            sessionVotes = new Integer(sessionVotes.intValue()+1);
+        }
+        out.println("I have voted " + sessionVotes + " times.");
+        
+        //Context
+        ServletContext context = request.getServletContext();
+        Integer contextVotes = (Integer)context.getAttribute("sub");
+        if (contextVotes == null){
+            contextVotes = 0;
+            context.setAttribute("sub", contextVotes);
+        }else{
+            contextVotes = new Integer(contextVotes.intValue()+1);
+        }
+        out.println("All users since the server started have voted " + contextVotes + " times.");    
+    } 
+    
     @Override
     public String getServletInfo() {
         return "Short description";

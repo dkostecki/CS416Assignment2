@@ -52,7 +52,7 @@ public class Context extends HttpServlet {
                  contextNum = new Integer(0);
             }
             contextNum = new Integer(contextNum.intValue() + 1);
-            context.setAttribute("numScores", contextNum);
+            context.setAttribute("contextNum", contextNum);
             
             out.println("All users since the server started have voted " + contextNum + " times.");
             

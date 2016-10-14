@@ -57,6 +57,9 @@ public class DisplayServlet extends HttpServlet {
                 votes.add(resultSet.getString("numvotes")); 
             }
             
+            //pass session counter to Display.jsp
+            //request.setAttribute("passSession",a);
+            
             //pass lists to Display.jsp
             request.setAttribute("passedAttribute", music); //numVotes shows an array of the votes //musictypes
             request.setAttribute("passedAttribute2", votes);

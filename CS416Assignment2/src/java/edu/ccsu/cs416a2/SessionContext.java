@@ -38,25 +38,34 @@ private javax.sql.DataSource datasource;
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try{
+            
+        //String count = (String)request.getAttribute("passSession");
+            
         //Session
         HttpSession session = request.getSession();
-        Integer sessionVotes = (Integer)session.getAttribute("votes");
+        Integer sessionVotes = (Integer)session.getAttribute("sessionVotes");
         if (sessionVotes == null){
             sessionVotes = 0;
-            session.setAttribute("votes", sessionVotes);
+            session.setAttribute("sessionVotes", sessionVotes);
+        }else{
+            sessionVotes = new Integer(sessionVotes.intValue()+1);
         }
+        session.setAttribute("sessionVotes", sessionVotes);
         out.println("I have voted " + sessionVotes + " times.");
+        
         
         //Context
         ServletContext context = request.getServletContext();
-         Integer contextVotes = (Integer)context.getAttribute("votes");
+        Integer contextVotes = (Integer)context.getAttribute("contextVotes");
         if (contextVotes == null){
             contextVotes = 0;
-            context.setAttribute("votes", contextVotes);
+            context.setAttribute("contextVotes", contextVotes);
+        }else{
+            contextVotes = new Integer(contextVotes.intValue()+1);
         }
-        out.println("All users since the server started have voted " + contextVotes + " times.");    
-            
-            
+        context.setAttribute("contextVotes", contextVotes);
+        out.println("All users since the server started have voted " + contextVotes + " times.</br>");    
+    
         } finally {            
             out.close();
         }
