@@ -1,20 +1,15 @@
+package edu.ccsu.cs416a2;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.ccsu.cs416a2;
 
-import java.lang.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import static java.lang.System.out;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,12 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author daniel
+ * @author Linsalo
  */
-public class DisplayServlet extends HttpServlet {
-    @Resource(name = "jdbc/HW2DB")
+@WebServlet(urlPatterns = {"/Context"})
+public class Context extends HttpServlet {
+@Resource(name = "jdbc/HW2DB")
     private javax.sql.DataSource datasource;
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -41,30 +36,27 @@ public class DisplayServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            Connection connection = datasource.getConnection();
-            
-            String readSQL = "select * from VOTES";
-            PreparedStatement readStatement = connection.prepareStatement(readSQL);
-            ResultSet resultSet = readStatement.executeQuery();
-            
-            while(resultSet.next())
-            {
-                String music = resultSet.getString("musictype");
-                String votes = resultSet.getString("numvotes");
-                
-                request.setAttribute("passedAttribute", music); //numVotes shows an array of the votes //musictypes
-                request.setAttribute("passedAttribute2", votes);
-                request.getRequestDispatcher("Display.jsp").forward(request, response);
+        PrintWriter out = response.getWriter();
+        try{
+            double total = Double.parseDouble(request.getParameter("total"));
+            ServletContext context = getServletContext();
+            Double sumOfContext = (Double)context.getAttribute("sumOfContext");
+            if(sumOfContext == null){
+                sumOfContext = new Double(0);
             }
-            resultSet.close();
-            readStatement.close();
-            connection.close();
-        }
-        catch (Exception e) {
-            out.println("Error occurred " + e.getMessage());
-        } finally {
+            sumOfContext = new Double(sumOfContext.doubleValue() + total);
+            context.setAttribute("sumOfContext", sumOfContext);
+            Integer contextNum = (Integer)context.getAttribute("contextNum");
+            
+            if(contextNum == null){
+                 contextNum = new Integer(0);
+            }
+            contextNum = new Integer(contextNum.intValue() + 1);
+            context.setAttribute("numScores", contextNum);
+            
+            out.println("All users since the server started have voted " + contextNum + " times.");
+            
+        } finally {            
             out.close();
         }
     }

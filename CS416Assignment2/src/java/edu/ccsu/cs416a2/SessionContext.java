@@ -5,30 +5,25 @@
  */
 package edu.ccsu.cs416a2;
 
-import java.lang.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import static java.lang.System.out;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author daniel
+ * @author Thi
  */
-public class DisplayServlet extends HttpServlet {
-    @Resource(name = "jdbc/HW2DB")
-    private javax.sql.DataSource datasource;
-
+@WebServlet(name = "SessionContext", urlPatterns = {"/SessionContext"})
+public class SessionContext extends HttpServlet {
+@Resource(name = "jdbc/HW2DB")
+private javax.sql.DataSource datasource;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -41,30 +36,28 @@ public class DisplayServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            Connection connection = datasource.getConnection();
-            
-            String readSQL = "select * from VOTES";
-            PreparedStatement readStatement = connection.prepareStatement(readSQL);
-            ResultSet resultSet = readStatement.executeQuery();
-            
-            while(resultSet.next())
-            {
-                String music = resultSet.getString("musictype");
-                String votes = resultSet.getString("numvotes");
-                
-                request.setAttribute("passedAttribute", music); //numVotes shows an array of the votes //musictypes
-                request.setAttribute("passedAttribute2", votes);
-                request.getRequestDispatcher("Display.jsp").forward(request, response);
-            }
-            resultSet.close();
-            readStatement.close();
-            connection.close();
+        PrintWriter out = response.getWriter();
+        try{
+        //Session
+        HttpSession session = request.getSession();
+        Integer sessionVotes = (Integer)session.getAttribute("votes");
+        if (sessionVotes == null){
+            sessionVotes = 0;
+            session.setAttribute("votes", sessionVotes);
         }
-        catch (Exception e) {
-            out.println("Error occurred " + e.getMessage());
-        } finally {
+        out.println("I have voted " + sessionVotes + " times.");
+        
+        //Context
+        ServletContext context = request.getServletContext();
+         Integer contextVotes = (Integer)context.getAttribute("votes");
+        if (contextVotes == null){
+            contextVotes = 0;
+            context.setAttribute("votes", contextVotes);
+        }
+        out.println("All users since the server started have voted " + contextVotes + " times.");    
+            
+            
+        } finally {            
             out.close();
         }
     }
