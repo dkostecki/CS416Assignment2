@@ -11,9 +11,8 @@ the number of times all users have voted since server started.
         <script type="text/javascript">        
             var xmlhttp;
             function getSessionContext() {
-                var vote = document.getElementById("vote"); 
+                var vote = document.getElementById("passSession"); 
                 
-               
                 if (window.XMLHttpRequest){
                     // code for IE7+, Firefox, Chrome, Opera, Safari
                     xmlhttp=new XMLHttpRequest();
@@ -44,10 +43,10 @@ the number of times all users have voted since server started.
         <a href = "DisplayServlet"> See voting results </br></a>
         <br/>
        
-        <a href = "SessionContext"> My VOTES </br></a>
-<!--        <form method="get" action="SessionContext">
+   
+        <form method="get" action="SessionContext">
         <input type="button" value="My Votes" onclick="getSessionContext();" /><br/>
         </form>
-        <div id="TYPE-SOMETHING-DIFFERENT"></div>-->
+        <div id="TYPE-SOMETHING-DIFFERENT"></div>
     </body>
 </html>

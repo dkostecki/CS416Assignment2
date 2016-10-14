@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -56,12 +57,12 @@ public class DisplayServlet extends HttpServlet {
                 music.add(resultSet.getString("musictype"));
                 votes.add(resultSet.getString("numvotes")); 
             }
-            
             //pass session counter to Display.jsp
             //request.setAttribute("passSession",a);
             
+            
             //pass lists to Display.jsp
-            request.setAttribute("passedAttribute", music); //numVotes shows an array of the votes //musictypes
+            request.setAttribute("passedAttribute", music); 
             request.setAttribute("passedAttribute2", votes);
             request.getRequestDispatcher("Display.jsp").forward(request, response);
             

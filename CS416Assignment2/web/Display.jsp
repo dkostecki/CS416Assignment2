@@ -19,10 +19,14 @@
         
         <%-- display from scriptlet --%>
         <p id="out"></p>
+        <p id="sessionOut"></p>
+        <p id="contextOut"></p>
         
         <%-- scriptlet to handle passed data from DisplayServlet --%>
         <script type="text/javascript">
-            
+            var session = '${passSession}';
+            var context = '${passContext}';
+        <%-- Everything above is Thi's experiment--%>    
             var text = "";
             var x = [];
             var y = [];
@@ -50,6 +54,10 @@
             
             //pass text back to html 
             document.getElementById("out").innerHTML = text;
+            
+            <%-- Everything below is Thi's experiment--%>  
+            document.getElementById("sessionOut").innerHTML = session;
+            document.getElementById("contextOut").innerHTML = context;
         </script>
     </body>
 </html>

@@ -116,8 +116,8 @@ public class StartPageServlet extends HttpServlet {
             }
             
             out.println("<input type=\"submit\" name=\"sub\" value=\"Submit Vote\"/><br/>");
-            
-            //If submit button is clicked, data will be displayed in jsp, but right now, it only shows the first musictype + its vote
+                      
+            //If submit button is clicked, data will be displayed in jsp
             if (request.getParameter("sub") != null) {
                 //If I don't have another String, PreparedStatement, ResultSet, it will only display the last the last musictype
                 String readSubmitSQL = "select * from VOTES";
@@ -137,28 +137,54 @@ public class StartPageServlet extends HttpServlet {
 
                         musictype = resultSubmit.getString("musictype");
                         insertStatement.setString(1, musictype);
-                    }
-                    
-                    //Go to DisplayServlet
-                    response.sendRedirect("DisplayServlet");   
+                    }               
                 }
+                //Go to DisplayServlet
+                //response.sendRedirect("DisplayServlet"); 
             }
      
             out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
             out.println("<input type=\"submit\" name=\"newSub\" value=\"Add type and vote\"/>");
-
+            
             //Go to DisplayServlet
+            /*
             if (request.getParameter("newSub") != null) {               
                 response.sendRedirect("DisplayServlet");
             }
-            String sessionCount = "0"; 
-            if(request.getParameter("sub") != null || request.getParameter("newSub") != null){
-            sessionCount = "1";    
-            request.setAttribute("passSession", sessionCount);
-            request.getRequestDispatcher("SessionContext.java").forward(request, response);
-            } 
-           
+            */
+            if(request.getParameter("newSub") != null || request.getParameter("sub") != null){
+                //===================================================================================
+                //Session
+                HttpSession session = request.getSession();
+                Integer sessionVotes = (Integer)session.getAttribute("sessionVotes");
+                
+                if (sessionVotes == null){
+                    sessionVotes = 1;
+                    session.setAttribute("sessionVotes", sessionVotes);
+                }else{
+                    sessionVotes = new Integer(sessionVotes.intValue()+1);
+                }
+                session.setAttribute("sessionVotes", sessionVotes);
+
+
+                //Context
+                ServletContext context = request.getServletContext();
+                Integer contextVotes = (Integer)context.getAttribute("contextVotes");
+                if (contextVotes == null){
+                    contextVotes = 1;
+                    context.setAttribute("contextVotes", contextVotes);
+                }else{
+                    contextVotes = new Integer(contextVotes.intValue()+1);
+                }
+                context.setAttribute("contextVotes", contextVotes);
+                
+                //Passes sessionVotes and contextVotes to DisplayServlet
+                request.setAttribute("passSession", sessionVotes);
+                request.setAttribute("passContext", contextVotes);
+                request.getRequestDispatcher("DisplayServlet").forward(request, response);
+            }
+            
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
@@ -202,26 +228,6 @@ public class StartPageServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-         HttpSession session = request.getSession();
-        Integer sessionVotes = (Integer)session.getAttribute("sub");
-        if (sessionVotes == null){
-            sessionVotes = 0;
-            session.setAttribute("sub", sessionVotes);
-        }else{
-            sessionVotes = new Integer(sessionVotes.intValue()+1);
-        }
-        out.println("I have voted " + sessionVotes + " times.");
-        
-        //Context
-        ServletContext context = request.getServletContext();
-        Integer contextVotes = (Integer)context.getAttribute("sub");
-        if (contextVotes == null){
-            contextVotes = 0;
-            context.setAttribute("sub", contextVotes);
-        }else{
-            contextVotes = new Integer(contextVotes.intValue()+1);
-        }
-        out.println("All users since the server started have voted " + contextVotes + " times.");    
     } 
     
     @Override
