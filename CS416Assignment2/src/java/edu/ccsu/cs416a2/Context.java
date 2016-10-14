@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Linsalo
+ * @author Thi
  */
 @WebServlet(urlPatterns = {"/Context"})
 public class Context extends HttpServlet {
