@@ -51,6 +51,7 @@ public class StartPageServlet extends HttpServlet {
                 PreparedStatement insertStatement = connection.prepareStatement(sql);
                 insertStatement.setString(1, musictype);
                 insertStatement.setInt(2, 1);
+                insertStatement.executeUpdate();
                 insertStatement.close();
             }
             
