@@ -27,6 +27,7 @@ the number of times all users have voted since server started.
             }
             
             
+            
             function callback() {
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.status == 200) {
@@ -37,7 +38,7 @@ the number of times all users have voted since server started.
         </script>
     </head>
     <body>     
-        <a href = "Display.jsp"> See voting results </br></a>
+        <a href = "DisplayServlet"> See voting results </br></a>
         <br/>
        
         <input type="button" value="My Votes" onclick="getSessionContext();" /><br/>
