@@ -68,7 +68,6 @@ public class StartPageServlet extends HttpServlet {
                 insertStatement.setInt(2, 1);
                 int recordsAffected = insertStatement.executeUpdate();
                 insertStatement.close();
-
             }
             
             

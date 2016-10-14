@@ -10,9 +10,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Results</title>
+        
     </head>
     <body>
-        Display page     
-        <h1><% out.println(request.getAttribute("passedAttribute")); %></h1>
+        
+        <p><% out.println(request.getAttribute("passedAttribute")); %> has <% out.println(request.getAttribute("passedAttribute2")); %> votes<br/></p>
+        
     </body>
 </html>
