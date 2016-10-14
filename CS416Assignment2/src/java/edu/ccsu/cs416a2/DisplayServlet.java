@@ -49,15 +49,21 @@ public class DisplayServlet extends HttpServlet {
             PreparedStatement readStatement = connection.prepareStatement(readSQL);
             ResultSet resultSet = readStatement.executeQuery();
             
+            List<String> music = new ArrayList<>();           
+            List<String> votes = new ArrayList<>();
+            
             while(resultSet.next())
             {
-                String music = resultSet.getString("musictype");
-                String votes = resultSet.getString("numvotes");
-                
-                request.setAttribute("passedAttribute", music); //numVotes shows an array of the votes //musictypes
-                request.setAttribute("passedAttribute2", votes);
-                request.getRequestDispatcher("Display.jsp").forward(request, response);
+                music.add(resultSet.getString("musictype"));
+                votes.add(resultSet.getString("numvotes")); 
             }
+            request.setAttribute("passedAttribute", music); //numVotes shows an array of the votes //musictypes
+            request.setAttribute("passedAttribute2", votes);
+            request.getRequestDispatcher("Display.jsp").forward(request, response);
+            
+        resultSet.close();
+        readStatement.close();
+        connection.close();
         }
         catch (Exception e) {
             out.println("Error occurred " + e.getMessage());

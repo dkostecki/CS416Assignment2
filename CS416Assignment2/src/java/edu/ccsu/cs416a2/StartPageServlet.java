@@ -179,8 +179,7 @@ public class StartPageServlet extends HttpServlet {
                     
                     
                     //This shows a bunch the arrays for musictype and numVotes in jsp
-                    request.setAttribute("passedAttribute", musicTypeArr + " has " + numVotes); //numVotes shows an array of the votes //musictypes
-                    request.getRequestDispatcher("Display.jsp").forward(request, response);
+                    response.sendRedirect("DisplayServlet");
                 }
 
             }
@@ -191,8 +190,7 @@ public class StartPageServlet extends HttpServlet {
 
             //This will only show the last musictype/votes from database
             if (request.getParameter("newSub") != null) {
-                request.setAttribute("passedAttribute", musicTypeArr + " has " + numVotes);
-                request.getRequestDispatcher("Display.jsp").forward(request, response);
+                response.sendRedirect("DisplayServlet");
             }
             out.println("</form>");
 
