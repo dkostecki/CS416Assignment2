@@ -44,13 +44,15 @@ public class StartPageServlet extends HttpServlet {
             Connection connection = datasource.getConnection();
 
             String musictype = request.getParameter("musictype");
-
+            String numvotes = request.getParameter("numvotes");
+            
             //This gives new musictype a value
             if (musictype != null && musictype.length() > 0) {
                 String sql = "insert into votes(musictype, numvotes) values (?,?)";
                 PreparedStatement insertStatement = connection.prepareStatement(sql);
                 insertStatement.setString(1, musictype);
                 insertStatement.setInt(2, 1);
+                insertStatement.executeUpdate();
                 insertStatement.close();
             }
             
