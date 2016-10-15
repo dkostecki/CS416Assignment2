@@ -1,33 +1,23 @@
 /*  |------------------------------------------|
- *  |          Servlet passing to jsp          |
+ *  |    Passes session and context to HTML    |
  *  |--------------------|---------------------|
  *  |    Thi & Daniel    |      10-16-16       |
  *  |--------------------|---------------------|
 */
 package edu.ccsu.cs416a2;
 
-import java.lang.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import static java.lang.System.out;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class DisplayServlet extends HttpServlet {
-    @Resource(name = "jdbc/HW2DB")
-    private javax.sql.DataSource datasource;
+@WebServlet(name = "SessionContext", urlPatterns = {"/SessionContext"})
+public class SessionContext extends HttpServlet {
 
-    /**
+ /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
@@ -39,36 +29,15 @@ public class DisplayServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            Connection connection = datasource.getConnection();
+        PrintWriter out = response.getWriter();
+        try {
             
-            String readSQL = "select * from VOTES";
-            PreparedStatement readStatement = connection.prepareStatement(readSQL);
-            ResultSet resultSet = readStatement.executeQuery();
-            
-            //lists to hold musictype and numvotes
-            List<String> music = new ArrayList<>();           
-            List<String> votes = new ArrayList<>();
-            
-            //populate lists
-            while(resultSet.next())
-            {
-                music.add(resultSet.getString("musictype"));
-                votes.add(resultSet.getString("numvotes")); 
-            }          
-            
-            //pass lists to Display.jsp
-            request.setAttribute("passedAttribute", music); 
-            request.setAttribute("passedAttribute2", votes);
-            request.getRequestDispatcher("Display.jsp").forward(request, response);
-            
-            resultSet.close();
-            readStatement.close();
-            connection.close();
-        }
-        catch (Exception e) {
-            out.println("Error occurred " + e.getMessage());
+        String sessionId = (String)request.getParameter("sessionId");
+        String contextId = (String)request.getParameter("contextId");
+        
+        out.println("I have voted " + sessionId + " times<br/>");    
+        out.println("All users since the server started have voted " + contextId + " times");  
+        
         } finally {
             out.close();
         }
@@ -114,3 +83,4 @@ public class DisplayServlet extends HttpServlet {
     }// </editor-fold>
 
 }
+

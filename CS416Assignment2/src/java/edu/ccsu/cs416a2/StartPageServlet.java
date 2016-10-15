@@ -154,7 +154,6 @@ public class StartPageServlet extends HttpServlet {
             }
             */
             if(request.getParameter("newSub") != null || request.getParameter("sub") != null){
-                //===================================================================================
                 //Session
                 HttpSession session = request.getSession();
                 Integer sessionVotes = (Integer)session.getAttribute("sessionVotes");
@@ -180,9 +179,13 @@ public class StartPageServlet extends HttpServlet {
                 context.setAttribute("contextVotes", contextVotes);
                 
                 //Passes sessionVotes and contextVotes to DisplayServlet
-                request.setAttribute("passSession", sessionVotes);
+                request.setAttribute("passSession", sessionVotes);;
                 request.setAttribute("passContext", contextVotes);
                 request.getRequestDispatcher("DisplayServlet").forward(request, response);
+                
+                //********* This stops the page from incrementing votes from refreshing page
+                //********* but it also stops the jsp from getting session/context numbers
+                //response.sendRedirect("DisplayServlet"); 
             }
             
             out.println("</form>");

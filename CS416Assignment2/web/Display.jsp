@@ -19,8 +19,11 @@
         
         <%-- display from scriptlet --%>
         <p id="out"></p>
+        
+        <%-- remove for final version --%>
         <p id="sessionOut"></p>
         <p id="contextOut"></p>
+        <input type="hidden" name="sessionId" value="${passSession}" />
         
         <%-- scriptlet to handle passed data from DisplayServlet --%>
         <script type="text/javascript">
