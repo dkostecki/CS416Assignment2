@@ -8,11 +8,13 @@ package edu.ccsu.cs416a2;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet(name = "SessionContext", urlPatterns = {"/SessionContext"})
 public class SessionContext extends HttpServlet {
@@ -29,6 +31,24 @@ public class SessionContext extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
+        
+        PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
+        Integer sessionVotes = (Integer)session.getAttribute("sessionVotes");
+        if (sessionVotes == null){
+                    sessionVotes = 0;
+        }
+        
+        
+        ServletContext context = request.getServletContext();
+        Integer contextVotes = (Integer)context.getAttribute("contextVotes");
+        if (contextVotes == null){
+                    contextVotes = 0;
+        }
+
+        out.println("I have voted " + sessionVotes + " times<br/>");    
+        out.println("All users since the server started have voted " + contextVotes + " times<br/>");  
         
     }
 
@@ -60,19 +80,7 @@ public class SessionContext extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
         
-        PrintWriter out = response.getWriter();
-        try {
-        String testingId = request.getParameter("testing");    
-        String sessionId = request.getParameter("sessionId");
-        String contextId = request.getParameter("contextId");
         
-        out.println("I have voted " + sessionId + " times<br/>");    
-        out.println("All users since the server started have voted " + contextId + " times<br/>");  
-        out.println("Testing: " + testingId);    
-        
-        } finally {
-            out.close();
-        }
         
     }
 

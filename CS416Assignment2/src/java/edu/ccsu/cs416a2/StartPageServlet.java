@@ -152,11 +152,6 @@ public class StartPageServlet extends HttpServlet {
             out.println("<input type=\"submit\" name=\"newSub\" value=\"Add type and vote\"/>");
             
             //Go to DisplayServlet
-            /*
-            if (request.getParameter("newSub") != null) {               
-                response.sendRedirect("DisplayServlet");
-            }
-            */
             if(request.getParameter("newSub") != null || request.getParameter("sub") != null){
                 //Session
                 HttpSession session = request.getSession();
@@ -171,9 +166,6 @@ public class StartPageServlet extends HttpServlet {
                 session.setAttribute("sessionVotes", sessionVotes);
                 
                
-                out.println("<form action=\"StartPageServlet\" method=\"POST\">");
-                out.println("<input type=\"hidden\" name=\"testing\"> value=100>");
-                out.println("</form>");
                 //Context
                 ServletContext context = request.getServletContext();
                 Integer contextVotes = (Integer)context.getAttribute("contextVotes");
@@ -186,8 +178,6 @@ public class StartPageServlet extends HttpServlet {
                 context.setAttribute("contextVotes", contextVotes);
                 
                 //Passes sessionVotes and contextVotes to DisplayServlet
-                request.setAttribute("passSession", sessionVotes);
-                request.setAttribute("passContext", contextVotes);
                 request.getRequestDispatcher("DisplayServlet").forward(request, response);
                 
                 //********* This stops the page from incrementing votes from refreshing page
@@ -197,9 +187,6 @@ public class StartPageServlet extends HttpServlet {
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
-            
-            
-            testingGlobal = 200;
             
             resultSet.close();
             readStatement.close();
@@ -239,13 +226,6 @@ public class StartPageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        
-        //Prints to AJAX on index.html
-        out.println("Testing: " + testingGlobal + "<br>");
-        
-        String sessionVotes = request.getParameter("testing");
-        out.println("Session: " + sessionVotes); 
     } 
     
     @Override
