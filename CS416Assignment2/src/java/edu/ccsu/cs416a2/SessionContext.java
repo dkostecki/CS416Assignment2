@@ -29,18 +29,7 @@ public class SessionContext extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            
-        String sessionId = (String)request.getParameter("sessionId");
-        String contextId = (String)request.getParameter("contextId");
         
-        out.println("I have voted " + sessionId + " times<br/>");    
-        out.println("All users since the server started have voted " + contextId + " times");  
-        
-        } finally {
-            out.close();
-        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -70,6 +59,21 @@ public class SessionContext extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
+        
+        PrintWriter out = response.getWriter();
+        try {
+        String testingId = request.getParameter("testing");    
+        String sessionId = request.getParameter("sessionId");
+        String contextId = request.getParameter("contextId");
+        
+        out.println("I have voted " + sessionId + " times<br/>");    
+        out.println("All users since the server started have voted " + contextId + " times<br/>");  
+        out.println("Testing: " + testingId);    
+        
+        } finally {
+            out.close();
+        }
+        
     }
 
     /**

@@ -21,7 +21,7 @@ the number of times all users have voted since server started.
                 }else{
                     xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
                 }
-               var url = "SessionContext";
+               var url = "StartPageServlet";
                 var params = "score=" + encodeURIComponent(session.value);
                 xmlhttp.open("POST", url, true);
                 xmlhttp.onreadystatechange = callback;

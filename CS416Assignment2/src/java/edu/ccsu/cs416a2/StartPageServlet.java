@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,9 +27,12 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "StartPageServlet", urlPatterns = {"/StartPageServlet"})
 public class StartPageServlet extends HttpServlet {
 
+    private int testingGlobal = 1; //I put testingGlobal at the bottom of processRequest
+    
     @Resource(name = "jdbc/HW2DB")
     private javax.sql.DataSource datasource;
-
+    
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -165,8 +169,11 @@ public class StartPageServlet extends HttpServlet {
                     sessionVotes = new Integer(sessionVotes.intValue()+1);
                 }
                 session.setAttribute("sessionVotes", sessionVotes);
-
-
+                
+               
+                out.println("<form action=\"StartPageServlet\" method=\"POST\">");
+                out.println("<input type=\"hidden\" name=\"testing\"> value=100>");
+                out.println("</form>");
                 //Context
                 ServletContext context = request.getServletContext();
                 Integer contextVotes = (Integer)context.getAttribute("contextVotes");
@@ -179,7 +186,7 @@ public class StartPageServlet extends HttpServlet {
                 context.setAttribute("contextVotes", contextVotes);
                 
                 //Passes sessionVotes and contextVotes to DisplayServlet
-                request.setAttribute("passSession", sessionVotes);;
+                request.setAttribute("passSession", sessionVotes);
                 request.setAttribute("passContext", contextVotes);
                 request.getRequestDispatcher("DisplayServlet").forward(request, response);
                 
@@ -187,11 +194,13 @@ public class StartPageServlet extends HttpServlet {
                 //********* but it also stops the jsp from getting session/context numbers
                 //response.sendRedirect("DisplayServlet"); 
             }
-            
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
-
+            
+            
+            testingGlobal = 200;
+            
             resultSet.close();
             readStatement.close();
             connection.close();
@@ -231,6 +240,12 @@ public class StartPageServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        
+        //Prints to AJAX on index.html
+        out.println("Testing: " + testingGlobal + "<br>");
+        
+        String sessionVotes = request.getParameter("testing");
+        out.println("Session: " + sessionVotes); 
     } 
     
     @Override
