@@ -21,7 +21,8 @@ the number of times all users have voted since server started.
                 }else{
                     xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
                 }
-               var url = "SessionContext";
+                //Gets session/context numbers from SessionContext.java
+                var url = "SessionContext";
                 var params = "score=" + encodeURIComponent(session.value);
                 xmlhttp.open("POST", url, true);
                 xmlhttp.onreadystatechange = callback;

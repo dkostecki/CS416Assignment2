@@ -32,7 +32,7 @@ public class SessionContext extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        
+        //Gets sessionVotes from StartPageServlet through getAttribute("sessionVotes);
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
         Integer sessionVotes = (Integer)session.getAttribute("sessionVotes");
@@ -40,16 +40,14 @@ public class SessionContext extends HttpServlet {
                     sessionVotes = 0;
         }
         
-        
         ServletContext context = request.getServletContext();
         Integer contextVotes = (Integer)context.getAttribute("contextVotes");
         if (contextVotes == null){
                     contextVotes = 0;
         }
 
-        out.println("I have voted " + sessionVotes + " times<br/>");    
-        out.println("All users since the server started have voted " + contextVotes + " times<br/>");  
-        
+        out.println("I have voted " + sessionVotes + " times.<br/>");    
+        out.println("All users since the server started have voted " + contextVotes + " times."); 
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

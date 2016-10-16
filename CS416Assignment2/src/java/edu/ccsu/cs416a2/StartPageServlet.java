@@ -13,9 +13,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -46,22 +46,6 @@ public class StartPageServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            Connection connection = datasource.getConnection();
-            
-            //Stores the input from textfield into string musictype
-            String newMusicType = request.getParameter("musictype");
-
-            //This gives new musictype a value
-            if (newMusicType != null && newMusicType.length() > 0) {
-                String sql = "insert into votes(musictype, numvotes) values (?,?)";
-                PreparedStatement insertStatement = connection.prepareStatement(sql);
-                insertStatement.setString(1, newMusicType);
-                insertStatement.setInt(2, 1);
-                insertStatement.executeUpdate();
-                insertStatement.close();
-            }
-
-            //Voting Page
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -70,7 +54,8 @@ public class StartPageServlet extends HttpServlet {
             out.println("<body>");
 
             out.println("Vote what your favorite type of music is: " + "</br>");
-
+            
+            Connection connection = datasource.getConnection();
             String readSQL = "select * from VOTES";
             PreparedStatement readStatement = connection.prepareStatement(readSQL);
             ResultSet resultSet = readStatement.executeQuery();
@@ -94,72 +79,68 @@ public class StartPageServlet extends HttpServlet {
                         + checkboxVal + " />" + musicTypeArr.get(i) + "<br>");
             }
 
-         
             out.println("<input type=\"submit\" name=\"sub\" value=\"Submit Vote\"/><br/>");
             
-            //If submit button is clicked, data will be displayed in jsp
-            if (request.getParameter("sub") != null) {
-                //If I don't have another String, PreparedStatement, ResultSet, it will only display the last the last musictype
-                String readSubmitSQL = "select * from VOTES";
-                PreparedStatement readSubStatement = connection.prepareStatement(readSubmitSQL);
-                ResultSet resultSubmit = readSubStatement.executeQuery();
-
+            //Data will be displayed in jsp if submit button is clicked
+            if (request.getParameter("sub") != null){
                 //String[] and for loop to try to check checked checkboxes and pass the values to the database
                 String[] check = request.getParameterValues("checkbox");
                 
-                String sql;
-               
-                
-                
-                //********** needs fixes ***********
-                for (int i = 0; i < check.length; i++) {
-                    //check = request.getParameterValues("musictype");
-                    String[] checkVal = request.getParameterValues(check[i]);
-                    
-                    if (checkVal != null) {
-                        sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = ? ";
-                        PreparedStatement insertStatement = connection.prepareStatement(sql);
+                if (check != null){
+                    //Stores selected checkboxes into checkVal
+                    List<String> checkVal = Arrays.asList(check);
+                    ArrayList<String> selectedTypes = new ArrayList<String>();
 
-                        String musictype = resultSubmit.getString("musictype");
-                        insertStatement.setString(1, musictype);
+                    //updateableList contains all selected music types
+                    selectedTypes.addAll(checkVal);
+
+                    //loops as many times as the total number of selected checkboxes
+                    for (int i = 0; i < selectedTypes.size(); i++) {
+                        String readSubmitSQL = "select * from VOTES";
+                        PreparedStatement readSubStatement = connection.prepareStatement(readSubmitSQL);
+                        ResultSet resultSubmit = readSubStatement.executeQuery();
+
+                        //numvotes increments 1 for each selected music types
+                        while (resultSubmit.next()) {
+                            if (selectedTypes.get(i).equals(resultSubmit.getString("musictype"))) {
+                                String sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = ?";
+                                PreparedStatement updateStatement = connection.prepareStatement(sql);
+
+                                String musictype = resultSubmit.getString("musictype");
+                                updateStatement.setString(1, musictype);
+                                updateStatement.executeUpdate();
+                                updateStatement.close();
+                            }
+                        } 
+                        resultSet.close();
+                        readSubStatement.close();
                     }
-                }
-                //Go to DisplayServlet
-                //response.sendRedirect("DisplayServlet"); 
+                }   
             }
             
             out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
             out.println("<input type=\"submit\" name=\"newSub\" value=\"Add type and vote\"/>");
             
-            String checkbox = request.getParameter("checkbox");
+            //Variable name for the submit button for adding new music type
             String newSub = request.getParameter("newSub");
-            //on selected checkbox
-            if (checkbox != null && newSub == null) {
-                String selectVote = "select * from votes order by musictype";
-                PreparedStatement selectStatement = connection.prepareStatement(selectVote);
-                ResultSet resultSetV = selectStatement.executeQuery();
-
-                int vote = 0;
-                while (resultSetV.next()) {
-                    if (checkbox.equals(resultSetV.getString("musictype"))) {
-                        vote = resultSetV.getInt("numvotes");
-                    }
-                }
-                
-                //Adds 1 to previous votes
-                String newVotes = Integer.toString(vote + 1);
-                String updateVote = "update votes set numvotes=? where musictype=?";
-                PreparedStatement updateStatement = connection.prepareStatement(updateVote);
-                updateStatement.setString(1, newVotes);
-                updateStatement.setString(2, checkbox);
-                updateStatement.executeUpdate();
-                updateStatement.close();
-            }
             
+            //Stores the input from textfield into string musictype
+            String newMusicType = request.getParameter("musictype");
+
+            //This gives new musictype a value
+            if (newMusicType != null && newMusicType.length() > 0) {
+                String sql = "insert into votes(musictype, numvotes) values (?,?)";
+                PreparedStatement insertStatement = connection.prepareStatement(sql);
+                insertStatement.setString(1, newMusicType);
+                insertStatement.setInt(2, 1);
+                insertStatement.executeUpdate();
+                insertStatement.close();
+            }
+
             //Go to DisplayServlet
             if (request.getParameter("newSub") != null || request.getParameter("sub") != null) {
-                //Session
+                //Session count
                 HttpSession session = request.getSession();
                 Integer sessionVotes = (Integer) session.getAttribute("sessionVotes");
 
@@ -171,7 +152,7 @@ public class StartPageServlet extends HttpServlet {
                 }
                 session.setAttribute("sessionVotes", sessionVotes);
 
-                //Context
+                //Context count
                 ServletContext context = request.getServletContext();
                 Integer contextVotes = (Integer) context.getAttribute("contextVotes");
                 if (contextVotes == null) {
@@ -183,20 +164,16 @@ public class StartPageServlet extends HttpServlet {
                 context.setAttribute("contextVotes", contextVotes);
 
                 //Passes sessionVotes and contextVotes to DisplayServlet
-                request.getRequestDispatcher("DisplayServlet").forward(request, response);
-
-                //********* This stops the page from incrementing votes from refreshing page
-                //********* but it also stops the jsp from getting session/context numbers
-                //response.sendRedirect("DisplayServlet"); 
+                //request.getRequestDispatcher("DisplayServlet").forward(request, response); //************************
+                response.sendRedirect("DisplayServlet"); //Stops votes from incrementing when user hits refresh on result page
             }
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
-
+            
             resultSet.close();
             readStatement.close();
             connection.close();
-
         } catch (Exception e) {
             out.println("Error occurred " + e.getMessage());
         } finally {
