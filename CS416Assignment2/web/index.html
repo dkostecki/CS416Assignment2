@@ -1,36 +1,45 @@
 <!DOCTYPE html>
+<!-- 
+   |------------------------------------------|
+   |          Jsp displaying results          |
+   |--------------------|---------------------|
+   |    Thi & Daniel    |      10-16-16       |
+   |--------------------|---------------------|
+
+-->
 <!--
 If user clicks on "My votes", it should show the vote from this session and
 the number of times all users have voted since server started.
 -->
+
 <html>
     <head>
         <title>Results</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript">        
+        <script type="text/javascript">
             var xmlhttp;
             function getSessionContext() {
-                
+
                 //The hiddens are needed to see the output
                 var session = document.getElementById("hidden");
-                
-                if (window.XMLHttpRequest){
+
+                if (window.XMLHttpRequest) {
                     // code for IE7+, Firefox, Chrome, Opera, Safari
-                    xmlhttp=new XMLHttpRequest();
-                }else{
-                    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                    xmlhttp = new XMLHttpRequest();
+                } else {
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
                 }
                 //Gets session/context numbers from SessionContext.java
                 var url = "SessionContext";
                 var params = "score=" + encodeURIComponent(session.value);
                 xmlhttp.open("POST", url, true);
                 xmlhttp.onreadystatechange = callback;
-                xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xmlhttp.send(params);
-                
+
             }
-            
+
             function callback() {
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.status == 200) {
@@ -43,7 +52,6 @@ the number of times all users have voted since server started.
     <body>     
         <a href = "DisplayServlet"> See voting results </br></a>
         <br/>
-        
         <input type="hidden" id="hidden"/>
         <input type="button" value="My Votes" onclick="getSessionContext()" /><br/>
         <div id="display"></div>

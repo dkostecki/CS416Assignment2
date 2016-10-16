@@ -3,7 +3,7 @@
  *  |--------------------|---------------------|
  *  |    Thi & Daniel    |      10-16-16       |
  *  |--------------------|---------------------|
-*/
+ */
 package edu.ccsu.cs416a2;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "SessionContext", urlPatterns = {"/SessionContext"})
 public class SessionContext extends HttpServlet {
 
- /**
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
@@ -31,23 +31,23 @@ public class SessionContext extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         //Gets sessionVotes from StartPageServlet through getAttribute("sessionVotes);
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
-        Integer sessionVotes = (Integer)session.getAttribute("sessionVotes");
-        if (sessionVotes == null){
-                    sessionVotes = 0;
-        }
-        
-        ServletContext context = request.getServletContext();
-        Integer contextVotes = (Integer)context.getAttribute("contextVotes");
-        if (contextVotes == null){
-                    contextVotes = 0;
+        Integer sessionVotes = (Integer) session.getAttribute("sessionVotes");
+        if (sessionVotes == null) {
+            sessionVotes = 0;
         }
 
-        out.println("I have voted " + sessionVotes + " times.<br/>");    
-        out.println("All users since the server started have voted " + contextVotes + " times."); 
+        ServletContext context = request.getServletContext();
+        Integer contextVotes = (Integer) context.getAttribute("contextVotes");
+        if (contextVotes == null) {
+            contextVotes = 0;
+        }
+
+        out.println("I have voted " + sessionVotes + " times.<br/>");
+        out.println("All users since the server started have voted " + contextVotes + " times.");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -77,9 +77,7 @@ public class SessionContext extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-        
-        
-        
+
     }
 
     /**
@@ -93,4 +91,3 @@ public class SessionContext extends HttpServlet {
     }// </editor-fold>
 
 }
-

@@ -1,9 +1,10 @@
 /*  |------------------------------------------|
- *  |          Servlet passing to jsp          |
+ *  |          Servlet passing to JSP          |
  *  |--------------------|---------------------|
  *  |    Thi & Daniel    |      10-16-16       |
  *  |--------------------|---------------------|
-*/
+ */
+//pass voting results to JSP for display
 package edu.ccsu.cs416a2;
 
 import java.lang.*;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class DisplayServlet extends HttpServlet {
+
     @Resource(name = "jdbc/HW2DB")
     private javax.sql.DataSource datasource;
 
@@ -41,32 +43,30 @@ public class DisplayServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             Connection connection = datasource.getConnection();
-            
+
             String readSQL = "select * from VOTES";
             PreparedStatement readStatement = connection.prepareStatement(readSQL);
             ResultSet resultSet = readStatement.executeQuery();
-            
+
             //lists to hold musictype and numvotes
-            List<String> music = new ArrayList<>();           
+            List<String> music = new ArrayList<>();
             List<String> votes = new ArrayList<>();
-            
+
             //populate lists
-            while(resultSet.next())
-            {
+            while (resultSet.next()) {
                 music.add(resultSet.getString("musictype"));
-                votes.add(resultSet.getString("numvotes")); 
-            }          
-            
+                votes.add(resultSet.getString("numvotes"));
+            }
+
             //pass lists to Display.jsp
-            request.setAttribute("passedAttribute", music); 
+            request.setAttribute("passedAttribute", music);
             request.setAttribute("passedAttribute2", votes);
             request.getRequestDispatcher("Display.jsp").forward(request, response);
-            
+
             resultSet.close();
             readStatement.close();
             connection.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             out.println("Error occurred " + e.getMessage());
         } finally {
             out.close();
