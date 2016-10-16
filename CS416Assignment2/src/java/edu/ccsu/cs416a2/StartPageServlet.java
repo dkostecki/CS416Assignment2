@@ -47,14 +47,15 @@ public class StartPageServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             Connection connection = datasource.getConnection();
-
-            String musictype = request.getParameter("musictype");
+            
+            //Stores the input from textfield into string musictype
+            String newMusicType = request.getParameter("musictype");
 
             //This gives new musictype a value
-            if (musictype != null && musictype.length() > 0) {
+            if (newMusicType != null && newMusicType.length() > 0) {
                 String sql = "insert into votes(musictype, numvotes) values (?,?)";
                 PreparedStatement insertStatement = connection.prepareStatement(sql);
-                insertStatement.setString(1, musictype);
+                insertStatement.setString(1, newMusicType);
                 insertStatement.setInt(2, 1);
                 insertStatement.executeUpdate();
                 insertStatement.close();
@@ -73,11 +74,11 @@ public class StartPageServlet extends HttpServlet {
             String readSQL = "select * from VOTES";
             PreparedStatement readStatement = connection.prepareStatement(readSQL);
             ResultSet resultSet = readStatement.executeQuery();
-
+            
             //musictype and numvotes are put into arrays
             List<String> musicTypeArr = new ArrayList<>();
             List<String> numVotes = new ArrayList<>();
-
+ 
             //Shows data from the musictype column in the DB
             while (resultSet.next()) {
                 musicTypeArr.add(resultSet.getString("musictype"));
@@ -95,7 +96,7 @@ public class StartPageServlet extends HttpServlet {
 
          
             out.println("<input type=\"submit\" name=\"sub\" value=\"Submit Vote\"/><br/>");
-
+            
             //If submit button is clicked, data will be displayed in jsp
             if (request.getParameter("sub") != null) {
                 //If I don't have another String, PreparedStatement, ResultSet, it will only display the last the last musictype
@@ -104,30 +105,33 @@ public class StartPageServlet extends HttpServlet {
                 ResultSet resultSubmit = readSubStatement.executeQuery();
 
                 //String[] and for loop to try to check checked checkboxes and pass the values to the database
-                String[] check = request.getParameterValues("musictype");
+                String[] check = request.getParameterValues("checkbox");
                 
                 String sql;
+               
                 
+                
+                //********** needs fixes ***********
                 for (int i = 0; i < check.length; i++) {
                     //check = request.getParameterValues("musictype");
                     String[] checkVal = request.getParameterValues(check[i]);
-
+                    
                     if (checkVal != null) {
                         sql = "UPDATE votes SET numvotes = numvotes + 1 WHERE musictype = ? ";
                         PreparedStatement insertStatement = connection.prepareStatement(sql);
 
-                        musictype = resultSubmit.getString("musictype");
+                        String musictype = resultSubmit.getString("musictype");
                         insertStatement.setString(1, musictype);
                     }
                 }
                 //Go to DisplayServlet
                 //response.sendRedirect("DisplayServlet"); 
             }
-
+            
             out.println("<br/>Or add a new one<br/>");
             out.println("<br/> New music type: <input type=\"textbox\" name=\"musictype\"/><br/>");
             out.println("<input type=\"submit\" name=\"newSub\" value=\"Add type and vote\"/>");
-
+            
             String checkbox = request.getParameter("checkbox");
             String newSub = request.getParameter("newSub");
             //on selected checkbox
@@ -142,7 +146,7 @@ public class StartPageServlet extends HttpServlet {
                         vote = resultSetV.getInt("numvotes");
                     }
                 }
-
+                
                 //Adds 1 to previous votes
                 String newVotes = Integer.toString(vote + 1);
                 String updateVote = "update votes set numvotes=? where musictype=?";
