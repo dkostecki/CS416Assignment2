@@ -58,18 +58,38 @@ public class StartPageServlet extends HttpServlet {
             Connection connection = datasource.getConnection();
             String readSQL = "select * from VOTES";
             PreparedStatement readStatement = connection.prepareStatement(readSQL);
-            ResultSet resultSet = readStatement.executeQuery();
+            ResultSet nullSet = readStatement.executeQuery();
+            
+            //Inserts Pop and Rock to a null DB
+            if(!nullSet.next()){
+                String sql = "INSERT INTO votes(musictype,numvotes) VALUES(?,?)";
+                PreparedStatement insertStatement = connection.prepareStatement(sql);
+                insertStatement.setString(1, "Pop");
+                insertStatement.setInt(2, 0);
+                insertStatement.executeUpdate();
+                insertStatement.close();
+
+                String sql2 = "INSERT INTO votes(musictype,numvotes) VALUES(?,?)";
+                PreparedStatement insertStatement2 = connection.prepareStatement(sql2);
+                insertStatement2.setString(1, "Rock");
+                insertStatement2.setInt(2, 0);
+                insertStatement2.executeUpdate();
+                insertStatement2.close();
+            }
+            nullSet.close();
             
             //musictype and numvotes are put into arrays
             List<String> musicTypeArr = new ArrayList<>();
             List<String> numVotes = new ArrayList<>();
- 
-            //Shows data from the musictype column in the DB
+            
+            ResultSet resultSet = readStatement.executeQuery();
+            //Adds data from DB to ArrayList
             while (resultSet.next()) {
                 musicTypeArr.add(resultSet.getString("musictype"));
                 numVotes.add(resultSet.getString("numvotes"));
             }
-
+            resultSet.close();
+            
             out.println("<form action=\"StartPageServlet\" method=\"GET\">");
 
             //Populate checkboxes
@@ -112,7 +132,7 @@ public class StartPageServlet extends HttpServlet {
                                 updateStatement.close();
                             }
                         } 
-                        resultSet.close();
+                        resultSubmit.close();
                         readSubStatement.close();
                     }
                 }   
@@ -127,19 +147,32 @@ public class StartPageServlet extends HttpServlet {
             
             //Stores the input from textfield into string musictype
             String newMusicType = request.getParameter("musictype");
-
+            
+            String rSQL = "select * from VOTES";
+            PreparedStatement rStatement = connection.prepareStatement(rSQL);
+            ResultSet rSet = rStatement.executeQuery();
+            
+            boolean same = false;
             //This gives new musictype a value
-            if (newMusicType != null && newMusicType.length() > 0) {
-                String sql = "insert into votes(musictype, numvotes) values (?,?)";
-                PreparedStatement insertStatement = connection.prepareStatement(sql);
-                insertStatement.setString(1, newMusicType);
-                insertStatement.setInt(2, 1);
-                insertStatement.executeUpdate();
-                insertStatement.close();
+            if ((newMusicType != null) && (newMusicType.length() > 0)) {
+                while (rSet.next()) {
+                    if((newMusicType.equals(rSet.getString("musictype")))){
+                        same = true;
+                    }
+                }
+                if(same == false){
+                    out.println("<br>No matches with list.<br>");
+                    String sql = "insert into votes(musictype, numvotes) values (?,?)";
+                    PreparedStatement insertStatement = connection.prepareStatement(sql);
+                    insertStatement.setString(1, newMusicType);
+                    insertStatement.setInt(2, 1);
+                    insertStatement.executeUpdate();
+                    insertStatement.close();
+                }else out.println("<br>That music type is already in the list. Please select from above.");
             }
 
             //Go to DisplayServlet
-            if (request.getParameter("newSub") != null || request.getParameter("sub") != null) {
+            if ((request.getParameter("sub") != null || ( (request.getParameter("newSub")!= null) &&(same == false)))) {
                 //Session count
                 HttpSession session = request.getSession();
                 Integer sessionVotes = (Integer) session.getAttribute("sessionVotes");
@@ -164,8 +197,7 @@ public class StartPageServlet extends HttpServlet {
                 context.setAttribute("contextVotes", contextVotes);
 
                 //Passes sessionVotes and contextVotes to DisplayServlet
-                //request.getRequestDispatcher("DisplayServlet").forward(request, response); //************************
-                response.sendRedirect("DisplayServlet"); //Stops votes from incrementing when user hits refresh on result page
+                response.sendRedirect("DisplayServlet"); 
             }
             out.println("</form>");
             out.println("</body>");
